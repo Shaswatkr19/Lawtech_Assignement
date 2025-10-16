@@ -1,0 +1,396 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sin A + Cos C Solver</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #e8f0f7 0%, #f5f7fa 100%);
+      padding: 40px 20px;
+      color: #2c3e50;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      background: white;
+      padding: 50px;
+      border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      max-width: 1200px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+    }
+    .left-section, .right-section {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+    
+    /* Pythagorean Formula */
+    .formula-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 28px;
+      font-weight: 600;
+      flex-wrap: wrap;
+    }
+    .badge {
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .badge-a { background: #ED8392; color: #fff; }
+    .badge-b { background: #7BC3EC; color: #fff; }
+    .badge-c { background: #B7F3F0; color: #2c3e50; }
+    
+    /* Verification Box */
+    .verification-box {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 16px;
+      padding: 30px;
+      text-align: center;
+    }
+    .verification-box .calc {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .verification-box .arrow {
+      font-size: 40px;
+      margin: 15px 0;
+      color: #6c757d;
+    }
+    .verification-box .result {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+    
+    /* Answer Section */
+    .answer-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .calculation {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 26px;
+      font-weight: 600;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .fraction {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    .fraction .top {
+      padding-bottom: 4px;
+    }
+    .fraction .line {
+      width: 100%;
+      height: 3px;
+      background: #2c3e50;
+      margin: 2px 0;
+    }
+    .fraction .bottom {
+      padding-top: 4px;
+    }
+    .final-answer {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      padding: 15px 40px;
+      border-radius: 16px;
+      font-size: 32px;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    
+    /* Triangle */
+    .triangle-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .triangle-diagram {
+      position: relative;
+      width: 350px;
+      height: 220px;
+    }
+    .triangle-svg {
+      width: 100%;
+      height: 100%;
+    }
+    .vertex-label {
+      position: absolute;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 22px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .vertex-a {
+      top: -15px;
+      left: -15px;
+      background: #ED8392;
+      color: white;
+    }
+    .vertex-b {
+      bottom: -15px;
+      left: -15px;
+      background: #7BC3EC;
+      color: white;
+    }
+    .vertex-c {
+      bottom: -15px;
+      right: -15px;
+      background: #B7F3F0;
+      color: #2c3e50;
+    }
+    .side-label {
+      position: absolute;
+      padding: 6px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .label-ab {
+      left: -60px;
+      top: 90px;
+      background: linear-gradient(180deg, #fde4e4 0%, #e3f2ff 100%);
+    }
+    .label-bc {
+      bottom: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg, #fff8e1 0%, #f3e5f5 100%);
+    }
+    .label-ac {
+      top: 80px;
+      right: -70px;
+      background: linear-gradient(180deg, #ffe4e1 0%, #ffedcc 100%);
+    }
+    
+    /* Formula Boxes */
+    .formula-boxes {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .formula-box {
+      background: #2c3e50;
+      color: white;
+      padding: 20px 25px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 600;
+    }
+    .formula-box:first-child {
+      border-radius: 12px 12px 0 0;
+    }
+    .formula-box:last-child {
+      border-radius: 0 0 12px 12px;
+    }
+    .formula-badge {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+    
+    /* Responsive */
+    @media (max-width: 968px) {
+      .container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 40px 30px;
+      }
+      .triangle-diagram {
+        width: 300px;
+        height: 190px;
+      }
+      .label-ab {
+        left: -55px;
+        top: 75px;
+      }
+      .label-ac {
+        right: -60px;
+        top: 70px;
+      }
+    }
+    
+    @media (max-width: 640px) {
+      body {
+        padding: 20px 10px;
+      }
+      .container {
+        padding: 30px 20px;
+        gap: 30px;
+      }
+      .formula-row {
+        font-size: 22px;
+      }
+      .verification-box {
+        padding: 20px;
+      }
+      .verification-box .calc {
+        font-size: 20px;
+      }
+      .calculation {
+        font-size: 22px;
+      }
+      .final-answer {
+        font-size: 28px;
+        padding: 12px 30px;
+      }
+      .triangle-diagram {
+        width: 250px;
+        height: 160px;
+      }
+      .vertex-label {
+        font-size: 18px;
+        padding: 6px 12px;
+      }
+      .side-label {
+        font-size: 16px;
+        padding: 4px 12px;
+      }
+      .label-ab {
+        left: -50px;
+        top: 60px;
+      }
+      .label-bc {
+        bottom: -40px;
+      }
+      .label-ac {
+        right: -55px;
+        top: 55px;
+      }
+      .formula-box {
+        font-size: 18px;
+        padding: 15px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Left Section -->
+    <div class="left-section">
+      <!-- Pythagorean Formula -->
+      <div class="formula-row">
+        <span class="badge badge-a">A</span>
+        <span class="badge badge-c">C</span>
+        <span>² =</span>
+        <span class="badge badge-b">A</span>
+        <span class="badge badge-b">B</span>
+        <span>² +</span>
+        <span class="badge badge-b">B</span>
+        <span class="badge badge-c">C</span>
+        <span>²</span>
+      </div>
+      
+      <!-- Verification -->
+      <div class="verification-box">
+        <div class="calc">17² = 8² + 15²</div>
+        <div class="calc">289 = 64 + 225</div>
+        <div class="arrow">↓</div>
+        <div class="result">8, 15, 17 is a Pythagorean triplet</div>
+      </div>
+      
+      <!-- Answer Calculation -->
+      <div class="answer-section">
+        <div class="calculation">
+          <span>(Sin</span>
+          <span class="badge badge-a">A</span>
+          <span>+ Cos</span>
+          <span class="badge badge-c">C</span>
+          <span>) =</span>
+          <div class="fraction">
+            <div class="top">8</div>
+            <div class="line"></div>
+            <div class="bottom">17</div>
+          </div>
+          <span>+</span>
+          <div class="fraction">
+            <div class="top">15</div>
+            <div class="line"></div>
+            <div class="bottom">17</div>
+          </div>
+        </div>
+        
+        <div class="calculation">
+          <span>=</span>
+          <div class="final-answer">23 / 17</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right Section -->
+    <div class="right-section">
+      <!-- Triangle -->
+      <div class="triangle-container">
+        <div class="triangle-diagram">
+          <svg class="triangle-svg" viewBox="0 0 350 220">
+            <polygon points="0,0 0,190 320,190" fill="rgba(173, 216, 230, 0.15)" stroke="none"/>
+            <line x1="0" y1="0" x2="0" y2="190" stroke="#2c3e50" stroke-width="4"/>
+            <line x1="0" y1="190" x2="320" y2="190" stroke="#2c3e50" stroke-width="4"/>
+            <line x1="0" y1="0" x2="320" y2="190" stroke="#2c3e50" stroke-width="4"/>
+          </svg>
+          <div class="vertex-label vertex-a">A</div>
+          <div class="vertex-label vertex-b">B</div>
+          <div class="vertex-label vertex-c">C</div>
+          <div class="side-label label-ab">8 cm</div>
+          <div class="side-label label-bc">15 cm</div>
+          <div class="side-label label-ac">17 cm</div>
+        </div>
+      </div>
+      
+      <!-- Formulas -->
+      <div class="formula-boxes">
+        <div class="formula-box">
+          <span>Sin</span>
+          <span class="formula-badge badge-a">A</span>
+          <span>=</span>
+          <div class="fraction">
+            <div class="top">Perpendicular</div>
+            <div class="line" style="background: white;"></div>
+            <div class="bottom">Hypotenuse</div>
+          </div>
+        </div>
+        <div class="formula-box">
+          <span>Cos</span>
+          <span class="formula-badge badge-c">C</span>
+          <span>=</span>
+          <div class="fraction">
+            <div class="top">Base</div>
+            <div class="line" style="background: white;"></div>
+            <div class="bottom">Hypotenuse</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
